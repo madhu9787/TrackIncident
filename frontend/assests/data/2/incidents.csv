@@ -1,0 +1,9 @@
+title,description,timestamp,severity
+Login service returning 500 errors,"Users unable to log in. Authentication endpoint returning HTTP 500. Error logs show NullPointerException in TokenValidator.java at line 142. Affects ~2300 users.",2024-01-15T14:32:00Z,critical
+Payment processing timeout,"Checkout flow hanging indefinitely. Payment gateway calls timing out after 30s. Stripe webhook receiver not responding. Revenue impact ~$45k/hr.",2024-01-15T16:05:00Z,critical
+Search returning stale results,"Product search showing items from 3 days ago. Elasticsearch index not refreshing. Cache invalidation appears broken.",2024-01-17T08:10:00Z,medium
+API rate limiting too aggressive,"Legitimate API clients getting 429 errors at 10% of normal rate limit. OAuth token bucket logic appears misconfigured.",2024-01-17T15:30:00Z,medium
+Database connection pool exhausted,"Application throwing 'No connections available' errors intermittently. Pool size not scaling under load. Affects all write operations.",2024-01-18T10:00:00Z,critical
+Mobile app crash on startup,"iOS app crashing immediately on launch after v2.4.1 push. Crash report: EXC_BAD_ACCESS in UserSessionManager. Android unaffected.",2024-01-18T14:20:00Z,high
+Dashboard charts not loading,"Main analytics dashboard showing blank charts. Console errors: TypeError: Cannot read properties of undefined. Affects all Pro tier customers.",2024-01-16T09:20:00Z,high
+Email notifications not sending,"Password reset and transactional emails not being delivered. Queue depth growing. SES bounce rate spiked to 87%.",2024-01-16T11:45:00Z,high

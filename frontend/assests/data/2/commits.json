@@ -1,0 +1,92 @@
+[
+  {
+    "commit_id": "a3f8c21",
+    "author": "Sarah Chen",
+    "email": "sarah.chen@company.com",
+    "message": "refactor: migrate TokenValidator to new JWT library v3",
+    "timestamp": "2024-01-15T13:55:00Z",
+    "branch": "main",
+    "files_changed": ["src/auth/TokenValidator.java", "src/auth/JWTConfig.java", "pom.xml"],
+    "diff": "diff --git a/src/auth/TokenValidator.java b/src/auth/TokenValidator.java\n-    public Claims validateToken(String token) {\n-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();\n+    public Claims validateToken(String token) {\n+        JwtParser parser = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secret.getBytes())).build();\n+        return parser.parseClaimsJws(token).getBody();\n+        // TODO: handle null token case\n     }"
+  },
+  {
+    "commit_id": "b9d4e55",
+    "author": "Marcus Rodriguez",
+    "email": "m.rodriguez@company.com",
+    "message": "feat: increase payment gateway timeout to improve conversion",
+    "timestamp": "2024-01-15T15:40:00Z",
+    "branch": "main",
+    "files_changed": ["src/payments/PaymentGateway.ts", "src/payments/StripeWebhook.ts", "config/timeouts.yml"],
+    "diff": "diff --git a/src/payments/PaymentGateway.ts b/src/payments/PaymentGateway.ts\n-  const TIMEOUT_MS = 5000;\n+  const TIMEOUT_MS = 120000; // increased from 5s to 2min\n   async processPayment(payload: PaymentPayload) {\n-    return await axios.post(STRIPE_URL, payload, { timeout: TIMEOUT_MS });\n+    return await axios.post(STRIPE_URL, payload, { timeout: TIMEOUT_MS, keepAlive: false });\n   }\ndiff --git a/src/payments/StripeWebhook.ts b/src/payments/StripeWebhook.ts\n-  app.post('/webhook', express.json(), handler);\n+  app.post('/webhook', express.raw({type: 'application/json'}), handler);\n   // Note: changed body parser - may affect existing integrations"
+  },
+  {
+    "commit_id": "c2a9f77",
+    "author": "Priya Sharma",
+    "email": "priya.s@company.com",
+    "message": "fix: resolve dashboard data fetching race condition",
+    "timestamp": "2024-01-16T08:50:00Z",
+    "branch": "main",
+    "files_changed": ["frontend/src/components/Dashboard.tsx", "frontend/src/hooks/useChartData.ts"],
+    "diff": "diff --git a/frontend/src/hooks/useChartData.ts b/frontend/src/hooks/useChartData.ts\n   async function fetchChartData(dateRange) {\n-    const data = await api.get('/analytics');\n-    return data.results.map(r => ({ x: r.date, y: r.value }));\n+    const data = await api.get('/analytics', { params: dateRange });\n+    return data?.results?.map(r => ({ x: r.date, y: r.value })) ?? [];\n+    // Removed null-check - assuming API always returns results\n   }"
+  },
+  {
+    "commit_id": "d7b1c44",
+    "author": "James Park",
+    "email": "james.park@company.com",
+    "message": "chore: upgrade AWS SES SDK to v3 and update email templates",
+    "timestamp": "2024-01-16T11:10:00Z",
+    "branch": "main",
+    "files_changed": ["src/notifications/EmailService.ts", "src/notifications/templates/password-reset.html", "package.json"],
+    "diff": "diff --git a/src/notifications/EmailService.ts b/src/notifications/EmailService.ts\n-import { SES } from 'aws-sdk';\n+import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';\n-const ses = new SES({ region: process.env.AWS_REGION });\n+const sesClient = new SESClient({ region: process.env.AWS_REGION });\n   async sendEmail(params) {\n-    return ses.sendEmail(params).promise();\n+    const command = new SendEmailCommand(params);\n+    return sesClient.send(command);\n+    // Note: SES v3 uses different param structure - FromArn vs Source\n   }"
+  },
+  {
+    "commit_id": "e5c3d88",
+    "author": "Alex Thompson",
+    "email": "alex.t@company.com",
+    "message": "perf: add Redis caching layer for product search results",
+    "timestamp": "2024-01-17T07:30:00Z",
+    "branch": "main",
+    "files_changed": ["src/search/SearchService.go", "src/search/CacheManager.go", "config/redis.yml"],
+    "diff": "diff --git a/src/search/CacheManager.go b/src/search/CacheManager.go\n+func (c *CacheManager) InvalidateSearchCache(productID string) {\n+    key := fmt.Sprintf('search:product:%s', productID)\n+    c.redis.Del(ctx, key) // BUG: missing wildcard, only invalidates exact key\n+    // Should be: c.redis.Keys(ctx, key+'*') to clear all related entries\n+}\n+\n+const CACHE_TTL = 72 * time.Hour // 3 day TTL - intentionally long for perf"
+  },
+  {
+    "commit_id": "f1e7b99",
+    "author": "Lisa Wang",
+    "email": "l.wang@company.com",
+    "message": "fix: tighten API rate limiting per security audit recommendations",
+    "timestamp": "2024-01-17T14:55:00Z",
+    "branch": "main",
+    "files_changed": ["src/middleware/RateLimiter.py", "src/auth/OAuthTokenBucket.py"],
+    "diff": "diff --git a/src/middleware/RateLimiter.py b/src/middleware/RateLimiter.py\n-RATE_LIMIT_PER_MINUTE = 1000\n+RATE_LIMIT_PER_MINUTE = 10  # per security team request - reduce by 99%\n+RATE_LIMIT_BURST = 5        # very aggressive burst limit\n-def check_rate_limit(token, endpoint):\n+def check_rate_limit(token, endpoint, user_tier='free'):\n     bucket = get_token_bucket(token)\n-    return bucket.consume(1)\n+    return bucket.consume(1)  # TODO: differentiate by user_tier"
+  },
+  {
+    "commit_id": "g8a2c11",
+    "author": "Derek Johnson",
+    "email": "derek.j@company.com",
+    "message": "perf: optimize database connection pool for high-traffic scenarios",
+    "timestamp": "2024-01-18T09:25:00Z",
+    "branch": "main",
+    "files_changed": ["src/db/ConnectionPool.java", "src/db/DatabaseConfig.java", "config/database.yml"],
+    "diff": "diff --git a/src/db/ConnectionPool.java b/src/db/ConnectionPool.java\n-  private static final int MAX_POOL_SIZE = 50;\n-  private static final int MIN_IDLE = 10;\n+  private static final int MAX_POOL_SIZE = 5; // reduced to limit DB load\n+  private static final int MIN_IDLE = 1;\n+  // WARNING: this may cause pool exhaustion under normal load\n   HikariConfig config = new HikariConfig();\n   config.setMaximumPoolSize(MAX_POOL_SIZE);\n-  config.setConnectionTimeout(30000);\n+  config.setConnectionTimeout(100); // 100ms timeout - very aggressive"
+  },
+  {
+    "commit_id": "h4d6e22",
+    "author": "Nina Patel",
+    "email": "nina.patel@company.com",
+    "message": "feat: UserSessionManager rewrite for iOS memory optimization",
+    "timestamp": "2024-01-18T13:45:00Z",
+    "branch": "main",
+    "files_changed": ["ios/Sources/UserSessionManager.swift", "ios/Sources/AppDelegate.swift"],
+    "diff": "diff --git a/ios/Sources/UserSessionManager.swift b/ios/Sources/UserSessionManager.swift\n-class UserSessionManager {\n-    var currentSession: UserSession?\n+class UserSessionManager {\n+    unowned var currentSession: UserSession  // Changed from optional to unowned\n+    // FIXME: unowned reference will crash if session is nil at startup\n     func validateSession() {\n-        guard let session = currentSession else { return }\n+        let session = currentSession  // removed nil guard\n         session.refresh()\n     }\n }"
+  },
+  {
+    "commit_id": "i9f3a66",
+    "author": "Tom Wilson",
+    "email": "t.wilson@company.com",
+    "message": "docs: update API documentation and add OpenAPI spec",
+    "timestamp": "2024-01-15T10:00:00Z",
+    "branch": "main",
+    "files_changed": ["docs/api.md", "openapi.yml"],
+    "diff": "diff --git a/docs/api.md b/docs/api.md\n+## Updated API Documentation\n+Added new endpoints for v2 API surface."
+  }
+]
