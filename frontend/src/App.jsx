@@ -3,7 +3,8 @@ import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Layout, Menu, Badge, Tag, Tooltip, ConfigProvider, theme } from 'antd';
 import {
   DashboardOutlined, LineChartOutlined, HistoryOutlined,
-  FundOutlined, ApiOutlined, ClockCircleOutlined, MenuOutlined
+  FundOutlined, ApiOutlined, ClockCircleOutlined, MenuOutlined,
+  SunFilled, MoonFilled
 } from '@ant-design/icons';
 import Landing   from './pages/Landing';
 import Dashboard from './pages/Dashboard';
@@ -21,7 +22,7 @@ const NAV = [
 ];
 
 // ── App-shell (with sidebar) used for /dashboard /analysis /history ───────────
-function AppShell() {
+function AppShell({ theme, toggleTheme }) {
   const [aiStatus,   setAiStatus]   = useState('checking');
   const [healthData, setHealthData] = useState(null);
   const [collapsed,  setCollapsed]  = useState(false);
@@ -135,16 +136,27 @@ function AppShell() {
           background: 'var(--bg-app)', padding: '0 16px',
           borderBottom: '1px solid var(--border-solid)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          height: 54,
+          height: 60,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            {collapsed && (
-              <MenuOutlined
-                onClick={() => setCollapsed(!collapsed)}
-                style={{ fontSize: 16, color: 'var(--text-muted)', cursor: 'pointer' }}
-              />
-            )}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <MenuOutlined
+              onClick={() => setCollapsed(!collapsed)}
+              style={{ fontSize: 18, color: 'var(--text-muted)', cursor: 'pointer' }}
+              className="lg:hidden"
+            />
+            {/* Logo on mobile */}
+            <div className="lg:hidden flex items-center gap-2" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+              <div style={{
+                width: 28, height: 28, borderRadius: 8, flexShrink: 0,
+                background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <FundOutlined style={{ color: '#fff', fontSize: 14 }} />
+              </div>
+              <span style={{ fontWeight: 800, fontSize: 14, color: 'var(--text-primary)' }}>RIC</span>
+            </div>
+
+            <div className="hidden lg:flex" style={{ alignItems: 'center', gap: 8 }}>
               <span style={{ color: 'var(--text-dim)', fontSize: 12 }}>RIC</span>
               <span style={{ color: 'var(--border-solid)' }}>/</span>
               <span style={{ color: 'var(--text-muted)', fontSize: 13, fontWeight: 600 }}>{pageLabel}</span>
@@ -152,6 +164,14 @@ function AppShell() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 hover:bg-white/10 cursor-pointer"
+              style={{ background: 'transparent', border: 'none' }}
+            >
+              {theme === 'dark' ? <SunFilled style={{ fontSize: 16, color: '#fbbf24' }} /> : <MoonFilled style={{ fontSize: 16, color: '#6366f1' }} />}
+            </button>
           </div>
         </Header>
 
@@ -209,7 +229,7 @@ export default function App() {
           {/* Full-page landing — no app shell */}
           <Route path="/" element={<Landing theme={themeMode} toggleTheme={toggleTheme} />} />
           {/* All other routes get the sidebar shell */}
-          <Route path="/*" element={<AppShell />} />
+          <Route path="/*" element={<AppShell theme={themeMode} toggleTheme={toggleTheme} />} />
         </Routes>
       </ToastProvider>
     </ConfigProvider>
