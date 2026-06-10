@@ -64,6 +64,7 @@ function AppShell({ theme, toggleTheme }) {
       <Sider
         collapsible collapsed={collapsed} onCollapse={setCollapsed}
         breakpoint="lg" collapsedWidth="0"
+        trigger={null}
         width={228}
         style={{ background: 'var(--bg-app)', borderRight: '1px solid var(--border-solid)', position: 'relative', zIndex: 100 }}
       >
