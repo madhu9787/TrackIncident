@@ -8,13 +8,19 @@ __pycache__/
 venv/
 .venv/
 
+
+
 # Environment Variables
 .env
 *.env
 
+
+
 # Database
 *.db
 *.sqlite3
+
+
 
 # Python cache
 .pytest_cache/
