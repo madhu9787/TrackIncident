@@ -228,9 +228,9 @@ export default function Dashboard() {
             borderRadius: 16, padding: '32px 32px 24px',
             boxShadow: '0 8px 32px rgba(0,0,0,0.05)',
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
               <Text style={{ color: 'var(--text-primary)', fontSize: 16, fontWeight: 800 }}>Data Sources</Text>
-              <Space>
+              <Space wrap>
                 <Dropdown menu={{ items: demoItems }} trigger={['click']}>
                   <Button size="small" style={{ borderColor: 'var(--border-strong)', color: '#10b981', background: 'transparent' }}>
                     Load Demo Sample <DownOutlined />
@@ -245,8 +245,8 @@ export default function Dashboard() {
 
             {/* Incidents */}
             <div style={{ marginBottom: 20 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <Space size={6}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+                <Space size={6} wrap>
                   <FileTextOutlined style={{ color: '#ef4444' }} />
                   <Text style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 13 }}>Incidents CSV</Text>
                   {incidents && <Tag color="green" style={{ fontSize: 10 }}>{incidents.count} loaded</Tag>}
@@ -271,8 +271,8 @@ export default function Dashboard() {
 
             {/* Commits */}
             <div style={{ marginBottom: 24 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <Space size={6}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+                <Space size={6} wrap>
                   <CodeOutlined style={{ color: '#6366f1' }} />
                   <Text style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 13 }}>Commits JSON</Text>
                   {commits && <Tag color="purple" style={{ fontSize: 10 }}>{commits.count} loaded</Tag>}

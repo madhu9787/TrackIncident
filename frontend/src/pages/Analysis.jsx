@@ -91,7 +91,8 @@ function DiffModal({ open, onClose, commit, incidentTitle }) {
       open={open}
       onCancel={onClose}
       footer={null}
-      width={900}
+      width="95%"
+      style={{ maxWidth: 900 }}
       centered
       title={null}
       styles={{
@@ -282,8 +283,8 @@ function IncidentCard({ item }) {
           borderBottom: '1px solid #1f1f2e',
           background: `${sev.bg}cc`,
         }}>
-          <Row justify="space-between" align="middle" wrap={false}>
-            <Col style={{ minWidth: 0 }}>
+          <Row justify="space-between" align="middle" gutter={[12, 12]}>
+            <Col xs={24} sm={16} md={18} style={{ minWidth: 0 }}>
               <Space size={8} wrap>
                 <BugOutlined style={{ color: sev.color, fontSize: 15 }} />
                 <Text style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: 14 }} ellipsis>
@@ -297,8 +298,8 @@ function IncidentCard({ item }) {
                 </Tag>
               </Space>
             </Col>
-            <Col style={{ flexShrink: 0 }}>
-              <Space size={6}>
+            <Col xs={24} sm={8} md={6}>
+              <Space size={6} wrap>
                 <Tag color="purple" icon={<ClockCircleOutlined />} style={{ fontSize: 11 }}>
                   {new Date(item.incident?.timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </Tag>
@@ -317,14 +318,14 @@ function IncidentCard({ item }) {
 
         {/* Card body */}
         <div style={{ padding: '20px' }}>
-          <Row gutter={20} align="top">
+          <Row gutter={[20, 20]} align="middle">
             {/* Confidence ring */}
-            <Col flex="110px" style={{ textAlign: 'center' }}>
+            <Col xs={24} sm="110px" style={{ textAlign: 'center' }}>
               <ConfidenceRing value={analysis.confidence} size={96} />
             </Col>
 
             {/* Root cause commit */}
-            <Col flex="1" style={{ minWidth: 0 }}>
+            <Col xs={24} sm="auto" style={{ flex: 1, minWidth: 0 }}>
               <div style={{
                 background: 'var(--bg-elevated)', borderRadius: 10, padding: '14px 16px',
                 border: '1px solid var(--border-light)', marginBottom: 12,
@@ -596,7 +597,7 @@ export default function Analysis() {
   return (
     <div style={{ maxWidth: 1140, margin: '0 auto' }}>
       {/* Header row */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: 24 }}>
         <div>
           <Title level={4} style={{ color: 'var(--text-primary)', margin: 0, fontWeight: 800 }}>Analysis Results</Title>
           <Text style={{ color: 'var(--text-muted)', fontSize: 13 }}>
@@ -604,7 +605,7 @@ export default function Analysis() {
             {data.run_label && <> · <Tag color="purple" style={{ marginLeft: 4 }}>{data.run_label}</Tag></>}
           </Text>
         </div>
-        <Space>
+        <Space wrap>
           <Tag color="green">{matched.length} correlated</Tag>
           {unmatched.length > 0 && <Tag color="default">{unmatched.length} no match</Tag>}
           <Button size="small" icon={<FileOutlined />} onClick={handleExport}

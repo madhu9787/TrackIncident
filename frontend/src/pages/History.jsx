@@ -28,14 +28,14 @@ function RunCard({ run, analyses, onDelete, onView }) {
       <div
         style={{
           padding: '14px 20px', cursor: 'pointer',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12,
           background: expanded ? 'var(--bg-elevated)' : 'var(--bg-card)',
           transition: 'background 0.15s',
           borderBottom: expanded ? '1px solid var(--border-strong)' : 'none',
         }}
         onClick={() => setExpanded(!expanded)}
       >
-        <Space size={12}>
+        <Space size={12} wrap>
           <div style={{
             width: 8, height: 8, borderRadius: '50%',
             background: '#6366f1', boxShadow: '0 0 8px #6366f1',
@@ -59,7 +59,7 @@ function RunCard({ run, analyses, onDelete, onView }) {
           </Tag>
         </Space>
 
-        <Space>
+        <Space wrap>
           <Button
             size="small" type="link" icon={<LineChartOutlined />}
             style={{ color: '#6366f1', padding: 0 }}
@@ -217,16 +217,16 @@ export default function History() {
 
       {/* Run summary stat cards */}
       {runs.length > 0 && (
-        <Row gutter={12} style={{ marginBottom: 24 }}>
+        <Row gutter={[12, 12]} style={{ marginBottom: 24 }}>
           {[
             { label: 'Total Runs',     value: runs.length,      color: '#6366f1' },
             { label: 'Total Analyses', value: analyses.length,  color: '#22c55e' },
             { label: 'Avg Confidence', value: `${(analyses.reduce((s, a) => s + a.confidence, 0) / (analyses.length || 1)).toFixed(1)}%`, color: '#eab308' },
           ].map(s => (
-            <Col xs={8} key={s.label}>
+            <Col xs={24} sm={8} key={s.label}>
               <div style={{
                 background: 'var(--bg-card)', border: `1px solid ${s.color}22`,
-                borderRadius: 10, padding: '14px 18px',
+                borderRadius: 10, padding: '14px 18px', height: '100%'
               }}>
                 <div style={{ color: 'var(--text-muted)', fontSize: 10, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>
                   {s.label}
