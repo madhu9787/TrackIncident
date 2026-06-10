@@ -13,10 +13,10 @@
 
 | Team Member | Role | Resume |
 |------------|------|--------|
-| Abinaya S | AI/ML Engineer | [Resume](c:/Users/madhu/OneDrive/Desktop/release-incident-correlator%20%281%29/release-incident-correlator/resumes/ABINAYA%20S%20RESUME.pdf) |
-| Dhivya V | IT Engineer | [Resume](c:/Users/madhu/OneDrive/Desktop/release-incident-correlator%20%281%29/release-incident-correlator/resumes/DHIVYA%20V%20RESUME%20Final.pdf%20(1).pdf) |
-| Madhumitha G | IT Engineer | [Resume](c:/Users/madhu/OneDrive/Desktop/release-incident-correlator%20%281%29/release-incident-correlator/resumes/Madhumitha%20G%20resume.pdf) |
-| Velmani R | CSE Engineer | [Resume](c:/Users/madhu/OneDrive/Desktop/release-incident-correlator%20%281%29/release-incident-correlator/resumes/Velmani_R_FlowCV_Resume_2026-06-10%20(2).pdf) |
+| Abinaya S | AIDS | [Resume](c:/Users/madhu/OneDrive/Desktop/release-incident-correlator%20%281%29/release-incident-correlator/resumes/ABINAYA%20S%20RESUME.pdf) |
+| Dhivya V | IT | [Resume](c:/Users/madhu/OneDrive/Desktop/release-incident-correlator%20%281%29/release-incident-correlator/resumes/DHIVYA%20V%20RESUME%20Final.pdf%20(1).pdf) |
+| Madhumitha G | IT| [Resume](c:/Users/madhu/OneDrive/Desktop/release-incident-correlator%20%281%29/release-incident-correlator/resumes/Madhumitha%20G%20resume.pdf) |
+| Velmani R | CSE | [Resume](c:/Users/madhu/OneDrive/Desktop/release-incident-correlator%20%281%29/release-incident-correlator/resumes/Velmani_R_FlowCV_Resume_2026-06-10%20(2).pdf) |
 
 ---++++++++++++
 
