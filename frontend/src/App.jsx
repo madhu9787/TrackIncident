@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { Layout, Menu, Badge, Tag, Tooltip, ConfigProvider, theme } from 'antd';
+import { Layout, Menu, Badge, Tag, Tooltip, ConfigProvider, theme, Dropdown } from 'antd';
 import {
   DashboardOutlined, LineChartOutlined, HistoryOutlined,
   FundOutlined, ApiOutlined, ClockCircleOutlined, MenuOutlined,
@@ -140,11 +140,17 @@ function AppShell({ theme, toggleTheme }) {
           height: 60,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <MenuOutlined
-              onClick={() => setCollapsed(!collapsed)}
-              style={{ fontSize: 18, color: 'var(--text-muted)', cursor: 'pointer' }}
-              className="lg:hidden"
-            />
+            <div className="lg:hidden">
+              <Dropdown 
+                menu={{ items: NAV.map(n => ({ key: n.key, icon: n.icon, label: n.label, onClick: () => navigate(n.key) })) }} 
+                trigger={['click']} 
+                placement="bottomLeft"
+              >
+                <button className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 hover:bg-white/10 cursor-pointer text-[var(--text-primary)]" style={{ background: 'transparent', border: 'none' }}>
+                  <MenuOutlined style={{ fontSize: 18 }} />
+                </button>
+              </Dropdown>
+            </div>
             {/* Logo on mobile */}
             <div className="lg:hidden flex items-center gap-2" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
               <div style={{
