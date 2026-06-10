@@ -17,7 +17,7 @@
 In software companies, developers push new code updates every day. Sometimes, an update causes a bug or breaks the system in production. When this happens, it takes developers and operations teams hours or even days to manually search through logs and find exactly which code change caused the problem. This wastes a lot of time, money, and effort.
 
 ### What We Made
-To solve this problem, we created RIC. It is an intelligent tool that automatically links production issues (which we call incidents) to the exact code change (the commit) that broke the system. It gives developers the exact root cause in seconds.
+To solve this problem, we created RIC. It is an intelligent tool that automatically links production issues (which we call incidents) to the exact code change (the commit) that broke the system. It gives developers the exact root cause in seconds.                   
 
 ## Deployment
 - **Frontend:** https://track-incident.vercel.app/ (Vercel)  
