@@ -1,0 +1,202 @@
+[
+  {
+    "commit_id": "f3a1b2c",
+    "author": "Sarah Chen",
+    "email": "sarah.chen@company.com",
+    "message": "docs: update onboarding guide and API reference",
+    "timestamp": "2024-03-11T08:15:00Z",
+    "branch": "main",
+    "files_changed": ["docs/onboarding.md", "docs/api-reference.md"],
+    "diff": "diff --git a/docs/onboarding.md b/docs/onboarding.md\n+## Updated onboarding steps for v2 API\n+Added new authentication flow documentation."
+  },
+  {
+    "commit_id": "a7d4e91",
+    "author": "Sarah Chen",
+    "email": "sarah.chen@company.com",
+    "message": "refactor: migrate JWT validation to jsonwebtoken v9 — breaking change in verify() API",
+    "timestamp": "2024-03-12T09:58:00Z",
+    "branch": "main",
+    "files_changed": ["src/auth/JwtValidator.js", "src/auth/middleware/authGuard.js", "src/auth/tokenService.js"],
+    "diff": "diff --git a/src/auth/JwtValidator.js b/src/auth/JwtValidator.js\n-const decoded = jwt.verify(token, process.env.JWT_SECRET);\n-return decoded;\n+// jsonwebtoken v9: verify() no longer returns payload directly on async\n+const decoded = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] });\n+// TODO: handle callback-style async — currently using sync which throws on null\n+return decoded.payload; // BUG: .payload undefined in sync mode v9"
+  },
+  {
+    "commit_id": "c5f2d83",
+    "author": "Sarah Chen",
+    "email": "sarah.chen@company.com",
+    "message": "fix: add null check for decoded token in authGuard",
+    "timestamp": "2024-03-12T10:30:00Z",
+    "branch": "main",
+    "files_changed": ["src/auth/middleware/authGuard.js"],
+    "diff": "diff --git a/src/auth/middleware/authGuard.js b/src/auth/middleware/authGuard.js\n+if (!decoded) {\n+  return res.status(401).json({ error: 'Invalid token' });\n+}\n+// NOTE: does not fix the .payload issue in JwtValidator — partial fix only"
+  },
+  {
+    "commit_id": "b8e3f17",
+    "author": "Marcus Rodriguez",
+    "email": "m.rodriguez@company.com",
+    "message": "chore: upgrade Node.js runtime from 16 to 20 in Dockerfile",
+    "timestamp": "2024-03-13T11:00:00Z",
+    "branch": "main",
+    "files_changed": ["Dockerfile", ".nvmrc", "package.json"],
+    "diff": "diff --git a/Dockerfile b/Dockerfile\n-FROM node:16-alpine\n+FROM node:20-alpine\n# Node 20 has stricter ESM/CJS interop — may affect some deps"
+  },
+  {
+    "commit_id": "d2c9a44",
+    "author": "Marcus Rodriguez",
+    "email": "m.rodriguez@company.com",
+    "message": "feat: increase Stripe payment timeout and switch to async webhook handler",
+    "timestamp": "2024-03-14T14:35:00Z",
+    "branch": "main",
+    "files_changed": ["src/payments/StripeService.ts", "src/payments/WebhookHandler.ts", "src/payments/PaymentQueue.ts"],
+    "diff": "diff --git a/src/payments/StripeService.ts b/src/payments/StripeService.ts\n-const TIMEOUT = 8000;\n+const TIMEOUT = 180000; // 3 min — intentionally high for retries\n   async charge(payload: ChargePayload) {\n-    return await stripe.paymentIntents.create(payload);\n+    const intent = stripe.paymentIntents.create(payload); // removed await\n+    return intent; // WARNING: returns Promise, not resolved value\n   }\ndiff --git a/src/payments/WebhookHandler.ts b/src/payments/WebhookHandler.ts\n-  app.post('/webhook/stripe', express.json(), handleWebhook);\n+  app.post('/webhook/stripe', express.raw({ type: '*/*' }), handleWebhook);\n+  // Changed body parser — Stripe signature verification requires raw body\n+  // FIXME: handleWebhook not updated to handle raw Buffer yet"
+  },
+  {
+    "commit_id": "e1b7c28",
+    "author": "Marcus Rodriguez",
+    "email": "m.rodriguez@company.com",
+    "message": "fix: resolve PaymentQueue race condition on concurrent checkouts",
+    "timestamp": "2024-03-14T15:05:00Z",
+    "branch": "main",
+    "files_changed": ["src/payments/PaymentQueue.ts"],
+    "diff": "diff --git a/src/payments/PaymentQueue.ts b/src/payments/PaymentQueue.ts\n-  async processNext() {\n+  async processNext(): Promise<void> {\n+    await this.lock.acquire(); // added mutex\n     const job = this.queue.shift();\n-    if (job) await this.process(job);\n+    if (job) {\n+      await this.process(job);\n+    }\n+    this.lock.release();\n+    // NOTE: lock not released on exception path — potential deadlock"
+  },
+  {
+    "commit_id": "f4a8d53",
+    "author": "Alex Thompson",
+    "email": "alex.t@company.com",
+    "message": "chore: upgrade eslint and prettier config",
+    "timestamp": "2024-03-15T09:00:00Z",
+    "branch": "main",
+    "files_changed": [".eslintrc.json", ".prettierrc", "package.json"],
+    "diff": "diff --git a/.eslintrc.json b/.eslintrc.json\n+  \"rules\": {\n+    \"no-unused-vars\": \"warn\"\n+  }"
+  },
+  {
+    "commit_id": "g3c1e72",
+    "author": "Alex Thompson",
+    "email": "alex.t@company.com",
+    "message": "perf: add Redis caching layer for Elasticsearch search results with 72h TTL",
+    "timestamp": "2024-03-16T16:20:00Z",
+    "branch": "main",
+    "files_changed": ["src/search/SearchService.go", "src/search/CacheLayer.go", "config/redis.yml"],
+    "diff": "diff --git a/src/search/CacheLayer.go b/src/search/CacheLayer.go\n+const SEARCH_CACHE_TTL = 72 * time.Hour // 3 day TTL\n+\n+func (c *Cache) InvalidateByProduct(productID string) {\n+    key := fmt.Sprintf(\"search:v1:%s\", productID)\n+    c.redis.Del(ctx, key)\n+    // BUG: only deletes exact key, not wildcard search:v1:* variants\n+    // All stale cached results remain until TTL expires\n+}"
+  },
+  {
+    "commit_id": "h9f5b61",
+    "author": "Alex Thompson",
+    "email": "alex.t@company.com",
+    "message": "feat: replace Elasticsearch query builder with new DSL abstraction layer",
+    "timestamp": "2024-03-17T08:45:00Z",
+    "branch": "main",
+    "files_changed": ["src/search/QueryBuilder.go", "src/search/SearchService.go", "src/search/IndexManager.go"],
+    "diff": "diff --git a/src/search/QueryBuilder.go b/src/search/QueryBuilder.go\n-func BuildQuery(term string) elastic.Query {\n-    return elastic.NewMatchQuery(\"name\", term)\n+func BuildQuery(term string, filters SearchFilters) elastic.Query {\n+    q := elastic.NewBoolQuery()\n+    q.Must(elastic.NewMatchQuery(\"name\", term))\n+    if filters.CategoryID != \"\" {\n+        q.Filter(elastic.NewTermQuery(\"category_id\", filters.CategoryID))\n+    }\n+    return q\n+    // WARNING: caller in SearchService still passes 1 arg — signature mismatch\n+    // Will panic at runtime: too few arguments in call to BuildQuery\n+}"
+  },
+  {
+    "commit_id": "i2d4f99",
+    "author": "Priya Sharma",
+    "email": "priya.s@company.com",
+    "message": "test: add unit tests for search query builder",
+    "timestamp": "2024-03-17T09:00:00Z",
+    "branch": "main",
+    "files_changed": ["src/search/__tests__/QueryBuilder_test.go"],
+    "diff": "diff --git a/src/search/__tests__/QueryBuilder_test.go b/src/search/__tests__/QueryBuilder_test.go\n+func TestBuildQuery(t *testing.T) {\n+    q := BuildQuery(\"shoes\", SearchFilters{})\n+    assert.NotNil(t, q)\n+}"
+  },
+  {
+    "commit_id": "j6e8c15",
+    "author": "James Park",
+    "email": "james.park@company.com",
+    "message": "ci: update GitHub Actions workflow to use ubuntu-22.04",
+    "timestamp": "2024-03-18T10:30:00Z",
+    "branch": "main",
+    "files_changed": [".github/workflows/ci.yml"],
+    "diff": "diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml\n-    runs-on: ubuntu-20.04\n+    runs-on: ubuntu-22.04"
+  },
+  {
+    "commit_id": "k1b3d47",
+    "author": "James Park",
+    "email": "james.park@company.com",
+    "message": "chore: upgrade AWS SES SDK v2 to v3 — new client API and param structure",
+    "timestamp": "2024-03-19T13:20:00Z",
+    "branch": "main",
+    "files_changed": ["src/notifications/EmailService.ts", "src/notifications/SesClient.ts", "src/notifications/templates/order-confirm.html"],
+    "diff": "diff --git a/src/notifications/EmailService.ts b/src/notifications/EmailService.ts\n-import { SES } from 'aws-sdk';\n-const ses = new SES({ region: process.env.AWS_REGION });\n+import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';\n+const sesClient = new SESClient({ region: process.env.AWS_REGION });\n   async sendEmail(to: string, subject: string, body: string) {\n-    return ses.sendEmail({\n-      Source: process.env.SES_FROM_ADDRESS,\n+    const command = new SendEmailCommand({\n+      FromEmailAddress: process.env.SES_FROM_ADDRESS, // WRONG: v3 uses 'Source', not 'FromEmailAddress'\n       Destination: { ToAddresses: [to] },\n       Message: { Subject: { Data: subject }, Body: { Text: { Data: body } } }\n-    }).promise();\n+    });\n+    return sesClient.send(command);\n   }"
+  },
+  {
+    "commit_id": "l4f2a88",
+    "author": "James Park",
+    "email": "james.park@company.com",
+    "message": "feat: add email retry logic with exponential backoff",
+    "timestamp": "2024-03-19T13:50:00Z",
+    "branch": "main",
+    "files_changed": ["src/notifications/EmailService.ts", "src/notifications/RetryQueue.ts"],
+    "diff": "diff --git a/src/notifications/RetryQueue.ts b/src/notifications/RetryQueue.ts\n+  async retryFailed(maxAttempts = 3) {\n+    for (const job of this.failedJobs) {\n+      await this.emailService.sendEmail(job.to, job.subject, job.body);\n+      // NOTE: sendEmail is broken due to SES v3 param issue — retries all failing\n+      // This will rapidly exhaust SES send quota\n+    }\n+  }"
+  },
+  {
+    "commit_id": "m7g5h31",
+    "author": "Priya Sharma",
+    "email": "priya.s@company.com",
+    "message": "refactor: split monolithic UserService into UserService + ProfileService",
+    "timestamp": "2024-03-20T10:00:00Z",
+    "branch": "main",
+    "files_changed": ["src/users/UserService.ts", "src/users/ProfileService.ts", "src/users/index.ts"],
+    "diff": "diff --git a/src/users/UserService.ts b/src/users/UserService.ts\n-export class UserService {\n-  getProfile() { ... }\n-  updateSettings() { ... }\n+// split into UserService (auth/account) and ProfileService (preferences/data)\n+export class UserService {\n+  // getProfile() moved to ProfileService\n+  updateSettings() { ... }\n+}"
+  },
+  {
+    "commit_id": "n3j1k59",
+    "author": "Lisa Wang",
+    "email": "l.wang@company.com",
+    "message": "feat: add Pro tier feature flags to analytics data fetching pipeline",
+    "timestamp": "2024-03-21T10:48:00Z",
+    "branch": "main",
+    "files_changed": ["src/analytics/DataPipeline.ts", "src/analytics/ChartBuilder.ts", "src/analytics/hooks/useProAnalytics.ts"],
+    "diff": "diff --git a/src/analytics/DataPipeline.ts b/src/analytics/DataPipeline.ts\n-  async fetchMetrics(userId: string) {\n-    return await api.get(`/metrics/${userId}`);\n+  async fetchMetrics(userId: string, tier: UserTier) {\n+    if (tier === 'pro') {\n+      const data = await api.get(`/metrics/pro/${userId}`);\n+      return data.proMetrics; // FIXME: proMetrics undefined when API returns { metrics: [...] }\n+    }\n+    return await api.get(`/metrics/${userId}`);\n   }\ndiff --git a/src/analytics/hooks/useProAnalytics.ts b/src/analytics/hooks/useProAnalytics.ts\n+export function useProAnalytics(userId: string) {\n+  const { data } = useQuery(['pro-metrics', userId], () =>\n+    DataPipeline.fetchMetrics(userId, 'pro')\n+  );\n+  return data?.map(d => ({ x: d.date, y: d.value })); // crashes if data undefined\n+}"
+  },
+  {
+    "commit_id": "o8m4n76",
+    "author": "Lisa Wang",
+    "email": "l.wang@company.com",
+    "message": "feat: add chart rendering for revenue and engagement metrics on dashboard",
+    "timestamp": "2024-03-21T11:10:00Z",
+    "branch": "main",
+    "files_changed": ["src/analytics/ChartBuilder.ts", "frontend/src/components/Dashboard/ProCharts.tsx"],
+    "diff": "diff --git a/frontend/src/components/Dashboard/ProCharts.tsx b/frontend/src/components/Dashboard/ProCharts.tsx\n+export function ProCharts({ userId }: { userId: string }) {\n+  const metrics = useProAnalytics(userId);\n+  return (\n+    <div>\n+      {metrics.map(m => <ChartBar key={m.x} data={m} />)}\n+      {/* BUG: metrics is undefined before fetch completes — no loading guard */}\n+    </div>\n+  );\n+}"
+  },
+  {
+    "commit_id": "p5c7d02",
+    "author": "Derek Johnson",
+    "email": "derek.j@company.com",
+    "message": "perf: add database connection pool tuning for peak load",
+    "timestamp": "2024-03-21T11:20:00Z",
+    "branch": "main",
+    "files_changed": ["src/db/PoolConfig.java", "config/database.yml"],
+    "diff": "diff --git a/src/db/PoolConfig.java b/src/db/PoolConfig.java\n-  MAX_POOL_SIZE = 50;\n+  MAX_POOL_SIZE = 100;\n   config.setMaximumPoolSize(MAX_POOL_SIZE);\n   config.setConnectionTimeout(30000);"
+  },
+  {
+    "commit_id": "q2h9f44",
+    "author": "Tom Wilson",
+    "email": "t.wilson@company.com",
+    "message": "hotfix: patch XSS vulnerability in user input sanitization",
+    "timestamp": "2024-03-21T11:25:00Z",
+    "branch": "main",
+    "files_changed": ["src/utils/sanitize.ts", "src/api/validators.ts"],
+    "diff": "diff --git a/src/utils/sanitize.ts b/src/utils/sanitize.ts\n+import DOMPurify from 'dompurify';\n+export const sanitizeInput = (input: string) => DOMPurify.sanitize(input);"
+  },
+  {
+    "commit_id": "r7k3m85",
+    "author": "Nina Patel",
+    "email": "nina.patel@company.com",
+    "message": "style: update dashboard UI colors and spacing for design refresh",
+    "timestamp": "2024-03-22T09:00:00Z",
+    "branch": "main",
+    "files_changed": ["frontend/src/styles/dashboard.css", "frontend/src/styles/theme.ts"],
+    "diff": "diff --git a/frontend/src/styles/dashboard.css b/frontend/src/styles/dashboard.css\n-  .chart-container { padding: 16px; }\n+  .chart-container { padding: 24px; gap: 12px; }"
+  },
+  {
+    "commit_id": "s4p6q19",
+    "author": "Sarah Chen",
+    "email": "sarah.chen@company.com",
+    "message": "fix: correct JWT secret key encoding for jsonwebtoken v9 compatibility",
+    "timestamp": "2024-03-22T10:15:00Z",
+    "branch": "main",
+    "files_changed": ["src/auth/JwtValidator.js", "src/auth/tokenService.js"],
+    "diff": "diff --git a/src/auth/JwtValidator.js b/src/auth/JwtValidator.js\n-return decoded.payload;\n+// Fix: v9 sync verify returns payload directly, not wrapped in .payload\n+return decoded;\n+// Also fixed: secret must be Buffer for HS256 in strict mode\n+const secret = Buffer.from(process.env.JWT_SECRET, 'utf8');"
+  }
+]

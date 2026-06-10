@@ -1,0 +1,6 @@
+title,description,timestamp,severity
+User Authentication Failure,"Users unable to login. JWT token validation throwing 500 errors. Affects all login endpoints. ~3200 users locked out.",2024-03-12T10:45:00Z,critical
+Checkout Payment Timeout,"Payment processing hanging indefinitely. Stripe webhook not responding. Transactions failing silently. Revenue loss ~$12k/hr.",2024-03-14T15:22:00Z,critical
+Product Search Returning Empty Results,"Search bar returning zero results for all queries. Elasticsearch index appears stale. Affects 100% of search traffic.",2024-03-17T09:10:00Z,high
+Email Notifications Not Delivered,"Password reset and order confirmation emails not sending. SES queue depth growing. Bounce rate spiked to 91%.",2024-03-19T14:05:00Z,high
+Dashboard Charts Blank for Pro Users,"Analytics dashboard showing empty charts for all Pro tier accounts. Console error: TypeError on undefined data. Free tier unaffected.",2024-03-21T11:30:00Z,medium
