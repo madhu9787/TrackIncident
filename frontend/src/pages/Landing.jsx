@@ -237,11 +237,11 @@ export default function Landing({ theme, toggleTheme }) {
               <FundFilled style={{ color: '#fff', fontSize: 15 }} />
             </div>
             <div>
-              <span className="font-black text-[var(--text-primary)] text-sm tracking-tight hidden sm:inline">Release Incident Correlator (RIC)</span>
-              <span className="font-black text-[var(--text-primary)] text-sm tracking-tight sm:hidden">RIC</span>
+              <span className="font-black text-[var(--text-primary)] text-sm tracking-tight hidden md:inline">Release Incident Correlator (RIC)</span>
+              <span className="font-black text-[var(--text-primary)] text-sm tracking-tight md:hidden">RIC</span>
             </div>
           </div>
-          <div className="hidden md:flex items-center gap-8 text-sm font-semibold text-[var(--text-muted)]">
+          <div className="hidden lg:flex items-center gap-4 xl:gap-8 text-sm font-semibold text-[var(--text-muted)]">
             <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="hover:text-[var(--text-primary)] transition-colors cursor-pointer flex items-center gap-1"><InfoCircleFilled style={{color: '#8b5cf6'}}/> About</button>
             <button onClick={() => document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' })} className="hover:text-[var(--text-primary)] transition-colors cursor-pointer flex items-center gap-1"><QuestionCircleFilled style={{color: '#a855f7'}}/> How to use</button>
             <button onClick={() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })} className="hover:text-[var(--text-primary)] transition-colors cursor-pointer flex items-center gap-1"><AppstoreFilled style={{color: '#c084fc'}}/> Features</button>
@@ -256,10 +256,11 @@ export default function Landing({ theme, toggleTheme }) {
             </button>
             <button
               onClick={() => navigate('/dashboard')}
-              className="px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-[1.02] cursor-pointer"
+              className="px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 hover:scale-[1.02] cursor-pointer whitespace-nowrap"
               style={{ background: 'linear-gradient(135deg, #6366f1, #a855f7)', boxShadow: '0 4px 16px #6366f144' }}
             >
-              Open Dashboard →
+              <span className="hidden sm:inline">Open Dashboard →</span>
+              <span className="sm:hidden">Dashboard →</span>
             </button>
           </div>
         </div>
