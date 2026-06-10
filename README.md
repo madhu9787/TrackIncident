@@ -13,12 +13,21 @@
 ## Project Title
 **Release Incident Correlator** – An AI‑driven platform that automatically correlates production incidents with recent code changes, providing root‑cause analysis and remediation recommendations.
 
+### Problem Statement
+In software companies, developers push new code updates every day. Sometimes, an update causes a bug or breaks the system in production. When this happens, it takes developers and operations teams hours or even days to manually search through logs and find exactly which code change caused the problem. This wastes a lot of time, money, and effort.
+
+### What We Made
+To solve this problem, we created RIC. It is an intelligent tool that automatically links production issues (which we call incidents) to the exact code change (the commit) that broke the system. It gives developers the exact root cause in seconds.
+
 ## Deployment
 - **Frontend:** https://track-incident.vercel.app/ (Vercel)  
 - **Backend:** Render  
-- **Live Demo Video:** [Watch full demo](https://youtu.be/fMzumygK6kQ?si=fATBtJIHJz0Q3VEJ)
+
 
 ## Demo Workflow
+
+- **Live Demo Video:** [Watch full demo](https://youtu.be/fMzumygK6kQ?si=fATBtJIHJz0Q3VEJ)
+
 Here is our full workflow:
 1. **Quick Uploads & Preview** – Users drag‑and‑drop incident logs and commit files; the UI instantly renders a preview table.
 2. **Pre‑processing & Filtering** – Backend normalises timestamps and applies a configurable time‑window to prune irrelevant commits.
