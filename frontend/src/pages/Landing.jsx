@@ -6,8 +6,9 @@ import {
   RightOutlined, FundFilled, InfoCircleFilled, 
   QuestionCircleFilled, AppstoreFilled, CloudFilled,
   UsergroupAddOutlined, ToolFilled, CheckCircleFilled,
-  SunFilled, MoonFilled
+  SunFilled, MoonFilled, MenuOutlined
 } from '@ant-design/icons';
+import { Dropdown } from 'antd';
 
 // ── Animated typewriter for the terminal demo ────────────────────────────────
 const DEMO_LINES = [
@@ -188,6 +189,13 @@ const FAQItem = ({ q, a }) => {
 export default function Landing({ theme, toggleTheme }) {
   const navigate = useNavigate();
 
+  const mobileNavItems = [
+    { key: 'about', label: <div onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>About</div>, icon: <InfoCircleFilled style={{color: '#8b5cf6'}}/> },
+    { key: 'how', label: <div onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}>How to use</div>, icon: <QuestionCircleFilled style={{color: '#a855f7'}}/> },
+    { key: 'features', label: <div onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}>Features</div>, icon: <AppstoreFilled style={{color: '#c084fc'}}/> },
+    { key: 'services', label: <div onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}>Services</div>, icon: <CloudFilled style={{color: '#fbbf24'}}/> },
+  ];
+
   return (
     <div className="min-h-screen overflow-x-hidden"
       style={{ background: 'var(--bg-base)', color: 'var(--text-primary)', fontFamily: "'Inter', system-ui, sans-serif" }}>
@@ -247,7 +255,14 @@ export default function Landing({ theme, toggleTheme }) {
             <button onClick={() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })} className="hover:text-[var(--text-primary)] transition-colors cursor-pointer flex items-center gap-1"><AppstoreFilled style={{color: '#c084fc'}}/> Features</button>
             <button onClick={() => document.getElementById('services').scrollIntoView({ behavior: 'smooth' })} className="hover:text-[var(--text-primary)] transition-colors cursor-pointer flex items-center gap-1"><CloudFilled style={{color: '#fbbf24'}}/> Services</button>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="lg:hidden">
+              <Dropdown menu={{ items: mobileNavItems }} trigger={['click']} placement="bottomRight">
+                <button className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 hover:bg-white/10 cursor-pointer text-[var(--text-primary)]" style={{ background: 'transparent', border: 'none' }}>
+                  <MenuOutlined style={{ fontSize: 18 }} />
+                </button>
+              </Dropdown>
+            </div>
             <button
               onClick={toggleTheme}
               className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 hover:bg-white/10 cursor-pointer"
