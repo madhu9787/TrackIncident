@@ -1,23 +1,13 @@
 # Release Incident Correlator
 
-**College:** Sri Shakthi Institute of Engineering and Technology  
-**Team Name:** Tech Titans
-
-| Member | Department | Resume |
-|---|---|---|
-| ABINAYA S | AIDS | [Resume](./resumes/ABINAYA%20S%20RESUME.pdf) |
-| DHIVYA V | IT | [Resume](./resumes/DHIVYA%20V%20RESUME%20Final.pdf%20(1).pdf) |
-| Madhumitha G | IT | [Resume](./resumes/Madhumitha%20G%20resume.pdf) |
-| Velmani R | CSE | [Resume](./resumes/Velmani_R_FlowCV_Resume_2026-06-10%20(2).pdf) |
-
 ## Project Title
 **Release Incident Correlator** – An AI‑driven platform that automatically correlates production incidents with recent code changes, providing root‑cause analysis and remediation recommendations.
 
 ### Problem Statement
 In software companies, developers push new code updates every day. Sometimes, an update causes a bug or breaks the system in production. When this happens, it takes developers and operations teams hours or even days to manually search through logs and find exactly which code change caused the problem. This wastes a lot of time, money, and effort.
 
-### What We Made
-To solve this problem, we created RIC. It is an intelligent tool that automatically links production issues (which we call incidents) to the exact code change (the commit) that broke the system. It gives developers the exact root cause in seconds.                   
+### What I Made
+To solve this problem, I created RIC. It is an intelligent tool that automatically links production issues (which we call incidents) to the exact code change (the commit) that broke the system. It gives developers the exact root cause in seconds.                   
 
 ## Deployment
 - **Frontend:** https://track-incident.vercel.app/ (Vercel)  
@@ -56,12 +46,12 @@ Here is our full workflow:
 ## Tech Stack
 **Frontend** – React builds the UI, Vite provides hot‑module reloading, Tailwind CSS enables utility‑first styling, and Framer Motion adds smooth micro‑animations. All components are orchestrated to deliver a responsive, premium experience.
 
-**Backend** – Python with Flask serves REST endpoints, Pandas handles data cleaning and transformation, and the Groq SDK communicates with the LLM. The backend also manages PostgreSQL connections and PDF generation.
+**Backend** – Fast API serves REST endpoints, Pandas handles data cleaning and transformation, and the Groq SDK communicates with the LLM. The backend also manages PostgreSQL connections and PDF generation.
 
 **Database** – PostgreSQL stores raw incident logs, commit diffs, AI inference results, and user feedback. Its relational model enables fast joins for correlation queries and robust analytics.
 
 ## AI Usage Document
-The AI layer is fully documented in a separate PDF. It explains how we call the Groq LLM, the prompt engineering strategy, confidence‑score calculations, and how recommendations are post‑processed. The document also outlines security and privacy considerations, showing that no raw logs leave the system.  
+The AI layer is fully documented in a separate PDF. It explains how I call the Groq LLM, the prompt engineering strategy, confidence‑score calculations, and how recommendations are post‑processed. The document also outlines security and privacy considerations, showing that no raw logs leave the system.  
 **View the AI usage details:** [AI Usage Document](./document/RELEASE%20INCIDENT%20CORRELATOR.pdf)
 
 ## Architecture Diagram
@@ -120,14 +110,3 @@ The AI layer is fully documented in a separate PDF. It explains how we call the 
 *Second incident example.*
 ![Incident 2](./images/incident%202%20db.png)
 
-## Future Enhancements
-- **Jira / ServiceNow Integration** – Auto‑create tickets from AI recommendations.
-- **Realtime Git Webhooks** – Trigger analysis instantly on each push.
-- **Slack / Teams Bot** – Push correlation summaries directly to chat‑ops channels.
-- **Multi‑tenant Support** – Isolate data per organisation for SaaS deployment.
-- **Model Fine‑Tuning** – Train a domain‑specific LLM on historic incident data for even higher accuracy.
-- **Advanced Visualisations** – 3‑D topology maps of micro‑service dependencies.
-- **User Role Management** – OAuth2/SSO integration for enterprise security.
-
-## Conclusion
-The Release Incident Correlator demonstrates how modern AI models, combined with efficient engineering practices, can transform incident management from a manual, time‑consuming process into an automated, intelligent workflow that accelerates resolution and improves system reliability.
